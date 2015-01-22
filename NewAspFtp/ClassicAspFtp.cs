@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -68,16 +69,26 @@ namespace Crosse.Net.NewAspFtp
         }
 
 
-        private long fileAccess;
+        private FileAccess fileAccess;
         [ComVisible(true)]
         public long lFileAccess
         {
-            get { return fileAccess; }
+            get
+            {
+                if (fileAccess == FileAccess.Read)
+                    return FILE_ACCESS_READ;
+                else
+                    return FILE_ACCESS_WRITE;
+            }
             set
             {
                 if (value < FILE_ACCESS_WRITE || value > FILE_ACCESS_READ)
                     throw new ArgumentOutOfRangeException();
-                fileAccess = value;
+
+                if (value == FILE_ACCESS_READ)
+                    fileAccess = FileAccess.Read;
+                else if (value == FILE_ACCESS_WRITE)
+                    fileAccess = FileAccess.Write;
             }
         }
 
@@ -122,6 +133,7 @@ namespace Crosse.Net.NewAspFtp
 
         AspFtp af;
         string[] dirItems;
+        Stream openedFile;
 
         public ClassicAspFtp()
         {
@@ -135,7 +147,6 @@ namespace Crosse.Net.NewAspFtp
             lTransferType = TRANSFER_TYPE_ASCII;
 
             ClearErrors();
-
         }
 
         /// <summary>
@@ -144,7 +155,16 @@ namespace Crosse.Net.NewAspFtp
         /// </summary>
         /// <returns><code>true</code> if the operation succeeded; otherwise, <code>false</code>.</returns>
         [ComVisible(true)]
-        public bool bCloseFile() { throw new NotImplementedException(); }
+        public bool bCloseFile()
+        {
+            if (openedFile != null)
+            {
+                openedFile.Close();
+                openedFile.Dispose();
+                openedFile = null;
+            }
+            return true;
+        }
 
         /// <summary>
         /// The bConnect method attempts to connect to the server specified by
@@ -315,7 +335,27 @@ namespace Crosse.Net.NewAspFtp
         /// <param name="strFileName">The file on the remote server to open.</param>
         /// <returns><code>true</code> if the operation succeeded; otherwise, <code>false</code>.</returns>
         [ComVisible(true)]
-        public bool bOpenFile(string strFileName) { throw new NotImplementedException(); }
+        public bool bOpenFile(string strFileName)
+        {
+            if (!bConnect())
+            {
+                SetLastError(-1, "Could not connect to server");
+                return false;
+            }
+            ClearErrors();
+
+            bool result = false;
+            try
+            {
+                openedFile = af.OpenFile(strFileName, fileAccess);
+                result = true;
+            }
+            catch (FtpException e)
+            {
+                SetLastError(e);
+            }
+            return result;
+        }
 
         /// <summary>
         /// The bPutFile method attempts to Put (send) the file specified in
@@ -538,7 +578,36 @@ namespace Crosse.Net.NewAspFtp
         /// <param name="strData">The data to write to the remote file.</param>
         /// <returns><code>true</code> if the operation succeeded; otherwise, <code>false</code>.</returns>
         [ComVisible(true)]
-        public bool bWriteFile(string strData) { throw new NotImplementedException(); }
+        public bool bWriteFile(string strData)
+        {
+            if (!bConnect())
+            {
+                SetLastError(-1, "No available connection.");
+                return false;
+            }
+
+            if (openedFile == null)
+            {
+                SetLastError(-1, "No File Opened.");
+                return false;
+            }
+
+            bool result = true;
+            try
+            {
+                using (StreamWriter w = new StreamWriter(openedFile))
+                {
+                    w.Write(strData);
+                    result = true;
+                }
+            }
+            catch (Exception e)
+            {
+                SetLastError(e);
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// The lGetDirCount method returns the number of items in the current
@@ -639,7 +708,35 @@ namespace Crosse.Net.NewAspFtp
         /// </summary>
         /// <returns>Returns the contents of the file specfied in the most recent bOpenFile statement.</returns>
         [ComVisible(true)]
-        public string sReadFile() { throw new NotImplementedException(); }
+        public string sReadFile()
+        {
+            if (!bConnect())
+            {
+                SetLastError(-1, "No available connection");
+                return String.Empty;
+            }
+
+            if (openedFile == null)
+            {
+                SetLastError(-1, "No file opened.");
+                return String.Empty;
+            }
+
+            string result = string.Empty;
+            try
+            {
+                using (StreamReader r = new StreamReader(openedFile))
+                {
+                    result = r.ReadToEnd();
+                }
+            }
+            catch (Exception e)
+            {
+                SetLastError(e);
+            }
+
+            return result;
+        }
 
 
         /// <summary>

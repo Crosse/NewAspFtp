@@ -1,6 +1,7 @@
 *.pfx
 *.suo
 *GhostDoc.xml
+.nuget/
 bin/
 obj/
 packages/

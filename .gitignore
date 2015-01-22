@@ -1,5 +1,6 @@
 *.pfx
 *.suo
+*GhostDoc.xml
 bin/
 obj/
 packages/

@@ -225,6 +225,45 @@ namespace Crosse.Net.NewAspFtp
             return result;
         }
 
+        /// <summary>
+        /// Opens a remote file.
+        /// </summary>
+        /// <param name="remoteFilePath">The remote file to open.</param>
+        /// <param name="access">The <see cref="System.IO.FileAccess"/> to use when opening the file.</param>
+        /// <returns>A <see cref="System.IO.Stream"/> representing the remote file.</returns>
+        /// <exception cref="System.NotImplementedException">File access is restricted to read or write only</exception>
+        public Stream OpenFile(string remoteFilePath, FileAccess access)
+        {
+            if (!IsConnected)
+                return null;
+
+            var xferType = TransferBinary ? FtpDataType.Binary : FtpDataType.ASCII;
+            Stream s = null;
+            try
+            {
+                switch (access)
+                {
+                    case FileAccess.Read:
+                        s = client.OpenRead(remoteFilePath, xferType);
+                        break;
+                    case FileAccess.Write:
+                        s = client.OpenWrite(remoteFilePath, xferType);
+                        break;
+                    case FileAccess.ReadWrite:
+                        throw new NotImplementedException("File access is restricted to read or write only");
+                }
+            }
+            catch (FtpCommandException e)
+            {
+                if (s != null)
+                    s.Close();
+
+                throw new FtpException(e.Message, e.HResult);
+            }
+
+            return s;
+        }
+
         private bool TransferFileBinary(Stream from, Stream to)
         {
             Debug.WriteLine("Initiating BINARY transfer");

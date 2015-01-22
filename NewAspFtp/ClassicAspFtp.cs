@@ -215,7 +215,7 @@ namespace Crosse.Net.NewAspFtp
         /// <param name="intType">The "type" of file to check. UNUSED.</param>
         /// <returns><code>true</code> if the operation succeeded; otherwise, <code>false</code>.</returns>
         [ComVisible(true)]
-        public bool bGetDir(string strDir = null, Nullable<int> intType = 0)
+        public bool bGetDir(string strDir = null, int intType = 0)
         {
             if (!bConnect())
             {
@@ -225,7 +225,7 @@ namespace Crosse.Net.NewAspFtp
             ClearErrors();
 
             // JMU's use of this library does not entail using intType at all.
-            if (intType.HasValue)
+            if (intType != 0)
                 throw new ArgumentException("Usage of intType is not supported");
 
             try

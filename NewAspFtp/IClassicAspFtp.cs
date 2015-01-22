@@ -24,7 +24,7 @@ namespace Crosse.Net.NewAspFtp
         bool bConnect();
         bool bDeleteFile(string strFile);
         bool bDisconnect();
-        bool bGetDir(string strDir, int? intType);
+        bool bGetDir(string strDir, int intType);
         bool bGetFile(string strSourceFile, string strTargetFile);
         bool bMakeDir(string strDir);
         bool bOpenFile(string strFileName);

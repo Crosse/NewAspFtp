@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewAspFtp", "NewAspFtp\NewAspFtp.csproj", "{D26CA498-2090-4215-B20D-BE62F3225AA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFtpTest", "SimpleFtpTest\SimpleFtpTest.csproj", "{774CEF9E-BBDC-4FB6-BDE4-449F76A5F5ED}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D26CA498-2090-4215-B20D-BE62F3225AA5} = {D26CA498-2090-4215-B20D-BE62F3225AA5}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D26CA498-2090-4215-B20D-BE62F3225AA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D26CA498-2090-4215-B20D-BE62F3225AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D26CA498-2090-4215-B20D-BE62F3225AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D26CA498-2090-4215-B20D-BE62F3225AA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{774CEF9E-BBDC-4FB6-BDE4-449F76A5F5ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{774CEF9E-BBDC-4FB6-BDE4-449F76A5F5ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{774CEF9E-BBDC-4FB6-BDE4-449F76A5F5ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{774CEF9E-BBDC-4FB6-BDE4-449F76A5F5ED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
